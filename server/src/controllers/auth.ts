@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import UserModel from "../models/User";
+import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 
@@ -13,17 +14,17 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      res.status(400).json({ msg: "All fields must be filled." });
+      res.status(400).json({ errors: [{ msg: "All fields must be filled." }] });
       return;
     }
     const user = await UserModel.findOne({ username });
     if (!user) {
-      res.status(404).json({ msg: "Username not found." });
+      res.status(404).json({ errors: [{ msg: "Username not found." }] });
       return;
     }
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      res.status(401).json({ msg: "Password is incorrect." });
+      res.status(401).json({ errors: [{ msg: "Password is incorrect." }] });
       return;
     }
     res.status(200).json({
@@ -38,14 +39,22 @@ export const login = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response) => {
   try {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      res.status(400).json(result);
+      return;
+    }
     const { email, username, password } = req.body;
     const foundUser = await UserModel.findOne({
       $or: [{ email }, { username }],
     });
     if (foundUser) {
       if (foundUser.email === email)
-        res.status(409).json({ msg: "Email is already taken." });
-      else res.status(409).json({ msg: "Username is already taken." });
+        res.status(409).json({ errors: [{ msg: "Email is already taken." }] });
+      else
+        res
+          .status(409)
+          .json({ errors: [{ msg: "Username is already taken." }] });
       return;
     }
     const salt = await bcrypt.genSalt(10);

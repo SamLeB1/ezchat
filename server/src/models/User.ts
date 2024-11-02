@@ -12,10 +12,12 @@ const UserSchema = new Schema(
       type: String,
       required: true,
       unique: true,
+      maxLength: 20,
     },
     password: {
       type: String,
       required: true,
+      minLength: 8,
     },
   },
   { timestamps: true }
