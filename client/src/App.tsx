@@ -1,3 +1,5 @@
+import AuthPage from "./pages/AuthPage.tsx";
+
 export default function App() {
-  return <h1>EzChat</h1>;
+  return <AuthPage />;
 }
