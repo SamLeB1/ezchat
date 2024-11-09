@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import useLogin from "../hooks/useLogin.tsx";
 import useSignup from "../hooks/useSignup.tsx";
 
 export default function AuthForm() {
@@ -6,7 +7,17 @@ export default function AuthForm() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { signup, isLoading, errors } = useSignup();
+  const { login, isLoading: isLoadingLogin, errors: errorsLogin } = useLogin();
+  const {
+    signup,
+    isLoading: isLoadingSignup,
+    errors: errorsSignup,
+  } = useSignup();
+
+  async function handleLogin(e: FormEvent) {
+    e.preventDefault();
+    await login(username, password);
+  }
 
   async function handleSignup(e: FormEvent) {
     e.preventDefault();
@@ -21,7 +32,10 @@ export default function AuthForm() {
 
   if (selectedForm === "login")
     return (
-      <form className="w-96 rounded-lg bg-white p-6 shadow">
+      <form
+        className="w-96 rounded-lg bg-white p-6 shadow"
+        onSubmit={handleLogin}
+      >
         <div className="mb-6">
           <button
             className="w-1/2 rounded-2xl bg-blue-100 py-1 text-blue-900"
@@ -75,6 +89,7 @@ export default function AuthForm() {
           className="w-full cursor-pointer rounded-lg bg-blue-500 py-2 text-white hover:bg-blue-600"
           type="submit"
           value="Log In"
+          disabled={isLoadingLogin}
         />
       </form>
     );
@@ -154,7 +169,7 @@ export default function AuthForm() {
           className="w-full cursor-pointer rounded-lg bg-blue-500 py-2 text-white hover:bg-blue-600"
           type="submit"
           value="Sign Up"
-          disabled={isLoading}
+          disabled={isLoadingSignup}
         />
       </form>
     );
