@@ -44,13 +44,20 @@ export default function AuthForm() {
             Log In
           </button>
           <button
-            className="w-1/2 rounded-2xl py-1 hover:bg-blue-50"
+            className="w-1/2 rounded-2xl py-1"
             type="button"
             onClick={() => setSelectedForm("signup")}
           >
             Sign Up
           </button>
         </div>
+        {errorsLogin.map((error, index) => {
+          return (
+            <p key={index} className="mb-1 text-sm text-red-500">
+              <b>Error:</b> {error.msg}
+            </p>
+          );
+        })}
         <div className="mb-3">
           <label
             className="mb-1 block text-sm font-medium text-gray-700"
@@ -101,7 +108,7 @@ export default function AuthForm() {
       >
         <div className="mb-6">
           <button
-            className="w-1/2 rounded-2xl py-1 hover:bg-blue-50"
+            className="w-1/2 rounded-2xl py-1"
             type="button"
             onClick={() => setSelectedForm("login")}
           >
@@ -114,6 +121,13 @@ export default function AuthForm() {
             Sign Up
           </button>
         </div>
+        {errorsSignup.map((error, index) => {
+          return (
+            <p key={index} className="mb-1 text-sm text-red-500">
+              <b>Error:</b> {error.msg}
+            </p>
+          );
+        })}
         <div className="mb-3">
           <label
             className="mb-1 block text-sm font-medium text-gray-700"
