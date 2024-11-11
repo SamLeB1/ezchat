@@ -1,5 +1,21 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import useAuthContext from "./hooks/useAuthContext.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 
 export default function App() {
-  return <AuthPage />;
+  const { stateAuth } = useAuthContext();
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={stateAuth.user ? <Navigate to="/chats" /> : <AuthPage />}
+        />
+        <Route
+          path="/chats"
+          element={stateAuth.user ? <h1>Chats Page</h1> : <Navigate to="/" />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
