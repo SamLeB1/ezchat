@@ -4,6 +4,9 @@
 
 @layer base {
   body {
-    @apply bg-gray-100;
+    @apply bg-gradient-to-r;
+    @apply from-[#7F7FD5];
+    @apply via-[#86A8E7];
+    @apply to-[#91EAE4];
   }
 }
