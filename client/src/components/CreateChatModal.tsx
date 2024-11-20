@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { MdClose } from "react-icons/md";
 import axios from "axios";
 import useDebounce from "../hooks/useDebounce.tsx";
 import pfp from "../assets/images/pfp.png";
@@ -37,9 +38,16 @@ export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
       onClick={() => setIsOpen(false)}
     >
       <div
-        className="w-96 rounded-lg bg-white p-6 pt-3 shadow-md"
+        className="relative w-96 rounded-lg bg-white p-6 pt-3 shadow-md"
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          className="absolute right-2 top-2 rounded-full p-1 hover:bg-gray-100"
+          title="Close"
+          onClick={() => setIsOpen(false)}
+        >
+          <MdClose className="h-6 w-6" />
+        </button>
         <h1 className="text-center text-2xl">Create a chat</h1>
         <div className="mt-3">
           <label

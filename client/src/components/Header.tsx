@@ -8,13 +8,13 @@ export default function Header() {
       <h1 className="text-2xl">EzChat</h1>
       <SearchBar />
       <div className="flex items-center">
-        <MdNotifications className="h-6 w-6 cursor-pointer" />
-        <img
-          className="mx-1 h-10 w-10 cursor-pointer rounded-full"
-          src={pfp}
-          alt=""
-        />
-        <MdArrowDropDown className="h-6 w-6 cursor-pointer" />
+        <button className="mr-2" title="Notifications">
+          <MdNotifications className="h-6 w-6" />
+        </button>
+        <button className="flex items-center" title="Account">
+          <img className="h-10 w-10 rounded-full" src={pfp} alt="" />
+          <MdArrowDropDown className="h-6 w-6" />
+        </button>
       </div>
     </header>
   );
