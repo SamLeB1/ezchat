@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import UserModel from "../models/User";
 import { Request, Response, NextFunction } from "express";
+import { User } from "../types/express/custom.types";
 
 type JwtPayload = {
   _id: string;
@@ -23,7 +24,12 @@ export default async function (
   const token = authorization.split(" ")[1];
   try {
     const { _id } = jwt.verify(token, process.env.SECRET) as JwtPayload;
-    req.user = await UserModel.findById(_id);
+    const user = await UserModel.findById(_id);
+    if (!user) {
+      res.status(401).json({ msg: "User not found." });
+      return;
+    }
+    req.user = user as User;
     next();
   } catch (err) {
     res.status(401).json(err);
