@@ -4,7 +4,7 @@ import { getChats, createChat } from "../controllers/chats";
 
 const router = Router();
 
-router.get("/chats", requireAuth, getChats);
-router.post("/chats", requireAuth, createChat);
+router.get("/", requireAuth, getChats);
+router.post("/", requireAuth, createChat);
 
 export default router;

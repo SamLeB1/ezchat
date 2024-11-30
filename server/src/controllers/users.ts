@@ -1,7 +1,14 @@
 import UserModel from "../models/User";
 import { Request, Response } from "express";
 
-export const getUsers = async (req: Request, res: Response) => {
+type GetUsersQueryParams = {
+  search?: string;
+};
+
+export const getUsers = async (
+  req: Request<{}, {}, {}, GetUsersQueryParams>,
+  res: Response
+) => {
   try {
     if (req.query.search) {
       const { search } = req.query;

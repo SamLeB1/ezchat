@@ -1,6 +1,10 @@
 import ChatModel from "../models/Chat";
 import { Request, Response } from "express";
 
+type CreateChatBody = {
+  userId: string;
+};
+
 export const getChats = async (req: Request, res: Response) => {
   try {
     const chats = await ChatModel.find({ users: req.user?._id });
@@ -10,7 +14,10 @@ export const getChats = async (req: Request, res: Response) => {
   }
 };
 
-export const createChat = async (req: Request, res: Response) => {
+export const createChat = async (
+  req: Request<{}, {}, CreateChatBody>,
+  res: Response
+) => {
   try {
     if (!req.body.userId) {
       res.status(400).json({ errors: [{ msg: "userId not provided." }] });

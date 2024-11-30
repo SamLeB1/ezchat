@@ -5,12 +5,23 @@ import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 
+type LoginBody = {
+  username: string;
+  password: string;
+};
+
+type SignupBody = {
+  email: string;
+  username: string;
+  password: string;
+};
+
 function createToken(_id: Types.ObjectId) {
   if (!process.env.SECRET) throw new Error("SECRET is undefined.");
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "1d" });
 }
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -37,7 +48,10 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (
+  req: Request<{}, {}, SignupBody>,
+  res: Response
+) => {
   try {
     const result = validationResult(req);
     if (!result.isEmpty()) {
