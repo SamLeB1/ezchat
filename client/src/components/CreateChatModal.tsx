@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MdClose } from "react-icons/md";
 import axios from "axios";
+import useAuthContext from "../hooks/useAuthContext.tsx";
 import useDebounce from "../hooks/useDebounce.tsx";
 import pfp from "../assets/images/pfp.png";
 
@@ -10,22 +11,43 @@ type CreateChatModalProps = {
 };
 
 export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
+  const { stateAuth } = useAuthContext();
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search);
   const [results, setResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
+  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
   function getResults(value: string) {
     if (value === "") {
       setResults([]);
       return;
     }
-    setIsLoading(true);
+    setIsLoadingResults(true);
     axios
       .get(`${import.meta.env.VITE_SERVER}/api/users?search=${value}`)
       .then((res) => setResults(res.data))
       .catch((err) => console.error(err))
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsLoadingResults(false));
+  }
+
+  function createChat(userId: string) {
+    setIsLoadingCreate(true);
+    axios
+      .post(
+        `${import.meta.env.VITE_SERVER}/api/chats`,
+        { userId },
+        {
+          headers: {
+            Authorization: `Bearer ${stateAuth.user?.token}`,
+          },
+        },
+      )
+      .catch((err) => console.error(err))
+      .finally(() => {
+        setIsLoadingCreate(false);
+        setIsOpen(false);
+      });
   }
 
   useEffect(() => {
@@ -66,14 +88,17 @@ export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
             autoFocus
           />
         </div>
-        {isLoading && <p className="mt-2">Loading...</p>}
-        {!isLoading && (
+        {isLoadingResults && <p className="mt-2">Loading...</p>}
+        {!isLoadingResults && (
           <ul className="mt-2 max-h-[50vh] overflow-y-auto">
             {results.map((result, i) => {
               return (
                 <li
                   key={i}
                   className="flex cursor-pointer items-center rounded-lg p-2 hover:bg-green-500 hover:text-white"
+                  onClick={() => {
+                    if (!isLoadingCreate) createChat(result._id);
+                  }}
                 >
                   <img
                     className="mr-2 h-10 w-10 rounded-full"
