@@ -7,7 +7,13 @@ type CreateChatBody = {
 
 export const getChats = async (req: Request, res: Response) => {
   try {
-    const chats = await ChatModel.find({ users: req.user?._id });
+    const chats = await ChatModel.find({ users: req.user?._id })
+      .populate("users", "username")
+      .populate({
+        path: "latestMessage",
+        select: "sender content",
+        populate: { path: "sender", select: "username" },
+      });
     res.status(200).json(chats);
   } catch (err) {
     res.status(500).json(err);
@@ -25,7 +31,13 @@ export const createChat = async (
     }
     const foundChat = await ChatModel.findOne({
       $and: [{ users: req.user?._id }, { users: req.body.userId }],
-    });
+    })
+      .populate("users", "username")
+      .populate({
+        path: "latestMessage",
+        select: "sender content",
+        populate: { path: "sender", select: "username" },
+      });
     if (foundChat) {
       res.status(200).json(foundChat);
       return;
@@ -33,6 +45,7 @@ export const createChat = async (
     const chat = await ChatModel.create({
       users: [req.user?._id, req.body.userId],
     });
+    await chat.populate("users", "username");
     res.status(201).json(chat);
   } catch (err) {
     res.status(500).json(err);

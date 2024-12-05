@@ -1,4 +1,5 @@
 import { MdGroupAdd, MdPersonAddAlt1 } from "react-icons/md";
+import ChatList from "./ChatList.tsx";
 
 export default function PeopleWindow() {
   return (
@@ -18,6 +19,7 @@ export default function PeopleWindow() {
             <MdGroupAdd className="h-6 w-6" />
           </button>
         </div>
+        <ChatList />
       </div>
     </div>
   );
