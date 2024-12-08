@@ -1,6 +1,6 @@
 import { createContext, useReducer } from "react";
 
-type Chat = {
+export type Chat = {
   _id: string;
   users: {
     _id: string;
