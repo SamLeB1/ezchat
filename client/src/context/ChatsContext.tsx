@@ -21,7 +21,7 @@ export type Chat = {
 
 type ChatsState = {
   chats: Chat[];
-  selectedChat: string | null;
+  selectedChat: Chat | null;
 };
 
 type ChatsSetAction = {
@@ -31,7 +31,7 @@ type ChatsSetAction = {
 
 type ChatsSelectAction = {
   type: "SELECT";
-  payload: string;
+  payload: Chat;
 };
 
 type ChatsAction = ChatsSetAction | ChatsSelectAction;

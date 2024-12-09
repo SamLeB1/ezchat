@@ -33,6 +33,7 @@ export default function ChatList() {
           <div
             key={i}
             className="mt-2 cursor-pointer rounded-lg bg-white px-2 py-1 shadow"
+            onClick={() => dispatchChats({ type: "SELECT", payload: chat })}
           >
             <div className="font-medium">{getChatName(chat)}</div>
             <div className="text-sm">
