@@ -2,18 +2,12 @@ import { useEffect } from "react";
 import axios from "axios";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
-import { Chat } from "../context/ChatsContext.tsx";
+import useGetChatName from "../hooks/useGetChatName.tsx";
 
 export default function ChatList() {
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
-
-  function getChatName(chat: Chat) {
-    if (chat.users.length !== 2) return "";
-    if (chat.users[0]._id === stateAuth.user?._id)
-      return chat.users[1].username;
-    else return chat.users[0].username;
-  }
+  const getChatName = useGetChatName();
 
   useEffect(() => {
     axios
