@@ -1,4 +1,5 @@
 import Messages from "./Messages.tsx";
+import MessageBar from "./MessageBar.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useGetChatName from "../hooks/useGetChatName.tsx";
 
@@ -14,8 +15,9 @@ export default function ChatWindow() {
             {getChatName(stateChats.selectedChat)}
           </h1>
         </div>
-        <div className="flex-1 p-2">
+        <div className="flex flex-1 flex-col p-2">
           <Messages />
+          <MessageBar />
         </div>
       </div>
     );

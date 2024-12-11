@@ -16,5 +16,5 @@ export default function Messages() {
     }
   }, [stateChats.selectedChat]);
 
-  return <div className="h-full rounded-lg bg-white"></div>;
+  return <div className="flex-1 rounded-lg bg-white shadow"></div>;
 }
