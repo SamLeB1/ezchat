@@ -16,3 +16,13 @@ export type Chat = {
   updatedAt: Date;
   __v: number;
 };
+
+export type Message = {
+  _id: string;
+  sender: string;
+  chat: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+};
