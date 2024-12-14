@@ -8,6 +8,8 @@ export default function Messages() {
   const [messages, setMessages] = useState<Message[]>([]);
   const { stateAuth } = useAuthContext();
   const { stateChats } = useChatsContext();
+  const root = document.getElementById("root");
+  const maxHeight = root ? root.offsetHeight - 200 : 0;
 
   function isOwnMessage(message: Message) {
     return stateAuth.user?._id === message.sender;
@@ -26,13 +28,13 @@ export default function Messages() {
 
   return (
     <div className="flex flex-1 flex-col justify-end rounded-lg bg-white p-2 shadow">
-      <div>
+      <div className="overflow-y-auto" style={{ maxHeight }}>
         {messages.map((message, i) => {
           if (isOwnMessage(message))
             return (
               <div
                 key={i}
-                className="ml-auto mt-1 w-fit max-w-[75%] rounded-2xl bg-blue-200 px-2 py-1"
+                className="ml-auto mt-1 w-fit max-w-[75%] rounded-2xl bg-blue-200 px-2 py-1 first:mt-0"
               >
                 <p>{message.content}</p>
               </div>
@@ -41,7 +43,7 @@ export default function Messages() {
             return (
               <div
                 key={i}
-                className="mt-1 w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1"
+                className="mt-1 w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1 first:mt-0"
               >
                 <p>{message.content}</p>
               </div>

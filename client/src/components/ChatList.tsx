@@ -8,6 +8,8 @@ export default function ChatList() {
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
   const getChatName = useGetChatName();
+  const root = document.getElementById("root");
+  const maxHeight = root ? root.offsetHeight - 176 : 0;
 
   useEffect(() => {
     axios
@@ -21,12 +23,12 @@ export default function ChatList() {
   }, []);
 
   return (
-    <div>
+    <div className="mt-2 overflow-y-auto" style={{ maxHeight }}>
       {stateChats.chats.map((chat, i) => {
         return (
           <div
             key={i}
-            className="mt-2 cursor-pointer rounded-lg bg-white px-2 py-1 shadow"
+            className="mt-2 cursor-pointer rounded-lg bg-white px-2 py-1 shadow first:mt-0"
             onClick={() => dispatchChats({ type: "SELECT", payload: chat })}
           >
             <div className="font-medium">{getChatName(chat)}</div>
