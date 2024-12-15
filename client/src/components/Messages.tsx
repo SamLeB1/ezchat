@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
+import pfp from "../assets/images/pfp.png";
 import { Message } from "../types.ts";
 
 export default function Messages() {
@@ -13,6 +14,14 @@ export default function Messages() {
 
   function isOwnMessage(message: Message) {
     return stateAuth.user?._id === message.sender;
+  }
+
+  function isPfpDisplayed(i: number) {
+    if (i < 0 || i > messages.length - 1) return false;
+    if (isOwnMessage(messages[i])) return false;
+    if (i === messages.length - 1) return true;
+    if (isOwnMessage(messages[i + 1])) return true;
+    else return false;
   }
 
   useEffect(() => {
@@ -40,10 +49,17 @@ export default function Messages() {
               </div>
             );
           else
-            return (
+            return isPfpDisplayed(i) ? (
+              <div key={i} className="mt-1 flex first:mt-0">
+                <img className="mr-1 h-8 w-8 rounded-full" src={pfp} alt="" />
+                <div className="w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1">
+                  <p>{message.content}</p>
+                </div>
+              </div>
+            ) : (
               <div
                 key={i}
-                className="mt-1 w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1 first:mt-0"
+                className="ml-9 mt-1 w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1 first:mt-0"
               >
                 <p>{message.content}</p>
               </div>
