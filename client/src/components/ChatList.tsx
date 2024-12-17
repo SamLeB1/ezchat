@@ -11,6 +11,10 @@ export default function ChatList() {
   const root = document.getElementById("root");
   const maxHeight = root ? root.offsetHeight - 176 : 0;
 
+  function getMessagePreview(message: string) {
+    return message.length <= 75 ? message : message.substring(0, 75) + "...";
+  }
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_SERVER}/api/chats`, {
@@ -32,9 +36,9 @@ export default function ChatList() {
             onClick={() => dispatchChats({ type: "SELECT", payload: chat })}
           >
             <div className="font-medium">{getChatName(chat)}</div>
-            <div className="text-sm">
+            <div className="break-words text-sm">
               {chat.latestMessage
-                ? `${chat.latestMessage.sender.username}: ${chat.latestMessage.content}`
+                ? `${chat.latestMessage.sender.username}: ${getMessagePreview(chat.latestMessage.content)}`
                 : "No messages"}
             </div>
           </div>

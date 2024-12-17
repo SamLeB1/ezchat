@@ -45,7 +45,7 @@ export default function Messages() {
                 key={i}
                 className="ml-auto mt-1 w-fit max-w-[75%] rounded-2xl bg-blue-200 px-2 py-1 first:mt-0"
               >
-                <p>{message.content}</p>
+                <p className="break-words">{message.content}</p>
               </div>
             );
           else
@@ -53,7 +53,7 @@ export default function Messages() {
               <div key={i} className="mt-1 flex first:mt-0">
                 <img className="mr-1 h-8 w-8 rounded-full" src={pfp} alt="" />
                 <div className="w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1">
-                  <p>{message.content}</p>
+                  <p className="break-words">{message.content}</p>
                 </div>
               </div>
             ) : (
@@ -61,7 +61,7 @@ export default function Messages() {
                 key={i}
                 className="ml-9 mt-1 w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1 first:mt-0"
               >
-                <p>{message.content}</p>
+                <p className="break-words">{message.content}</p>
               </div>
             );
         })}
