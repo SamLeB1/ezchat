@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
+import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useGetChatName from "../hooks/useGetChatName.tsx";
@@ -22,7 +23,11 @@ export default function ChatList() {
           Authorization: `Bearer ${stateAuth.user?.token}`,
         },
       })
-      .then((res) => dispatchChats({ type: "SET", payload: res.data }))
+      .then((res) => {
+        dispatchChats({ type: "SET", payload: res.data });
+        const chatIds = res.data.map((chat) => chat._id);
+        socket.emit("join-chats", chatIds);
+      })
       .catch((err) => console.error(err));
   }, []);
 
