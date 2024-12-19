@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
+import useMessagesContext from "../hooks/useMessagesContext.tsx";
 import pfp from "../assets/images/pfp.png";
 import { Message } from "../types.ts";
 
 export default function Messages() {
-  const [messages, setMessages] = useState<Message[]>([]);
   const { stateAuth } = useAuthContext();
   const { stateChats } = useChatsContext();
+  const { messages, dispatchMessages } = useMessagesContext();
   const root = document.getElementById("root");
   const maxHeight = root ? root.offsetHeight - 200 : 0;
 
@@ -30,7 +31,7 @@ export default function Messages() {
         .get(
           `${import.meta.env.VITE_SERVER}/api/messages?chatId=${stateChats.selectedChat._id}`,
         )
-        .then((res) => setMessages(res.data))
+        .then((res) => dispatchMessages({ type: "SET", payload: res.data }))
         .catch((err) => console.error(err));
     }
   }, [stateChats.selectedChat]);
