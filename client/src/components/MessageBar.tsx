@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { MdSend } from "react-icons/md";
 import axios from "axios";
+import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
+import useMessagesContext from "../hooks/useMessagesContext.tsx";
 
 export default function MessageBar() {
   const messageInputRef = useRef<HTMLInputElement>(null);
@@ -10,6 +12,7 @@ export default function MessageBar() {
   const [isLoading, setIsLoading] = useState(false);
   const { stateAuth } = useAuthContext();
   const { stateChats } = useChatsContext();
+  const { dispatchMessages } = useMessagesContext();
 
   function handleSend() {
     if (messageInput === "") return;
@@ -27,6 +30,10 @@ export default function MessageBar() {
           },
         },
       )
+      .then((res) => {
+        dispatchMessages({ type: "ADD", payload: res.data });
+        socket.emit("send-msg", res.data);
+      })
       .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
   }

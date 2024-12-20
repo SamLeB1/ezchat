@@ -32,6 +32,10 @@ io.on("connection", (socket) => {
   socket.on("join-chats", (chatIds) => {
     socket.join(chatIds);
   });
+
+  socket.on("send-msg", (msg) => {
+    socket.to(msg.chat).emit("receive-msg", msg);
+  });
 });
 
 httpServer.listen(PORT, () => {
