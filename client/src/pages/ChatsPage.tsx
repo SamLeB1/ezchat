@@ -8,12 +8,13 @@ import ChatWindow from "../components/ChatWindow.tsx";
 import { Message } from "../types.ts";
 
 export default function ChatsPage() {
-  const { stateChats } = useChatsContext();
+  const { stateChats, dispatchChats } = useChatsContext();
   const { dispatchMessages } = useMessagesContext();
 
   function onReceiveMessage(message: Message) {
     if (stateChats.selectedChat?._id === message.chat)
       dispatchMessages({ type: "ADD", payload: message });
+    dispatchChats({ type: "UPDATE_LATEST_MSG", payload: message });
   }
 
   useEffect(() => {

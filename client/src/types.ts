@@ -19,7 +19,10 @@ export type Chat = {
 
 export type Message = {
   _id: string;
-  sender: string;
+  sender: {
+    _id: string;
+    username: string;
+  };
   chat: string;
   content: string;
   createdAt: Date;

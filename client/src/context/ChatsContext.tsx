@@ -1,5 +1,5 @@
 import { createContext, useReducer } from "react";
-import { Chat } from "../types.ts";
+import { Chat, Message } from "../types.ts";
 
 type ChatsState = {
   chats: Chat[];
@@ -16,7 +16,15 @@ type ChatsSelectAction = {
   payload: Chat;
 };
 
-type ChatsAction = ChatsSetAction | ChatsSelectAction;
+type ChatsUpdateLatestMsgAction = {
+  type: "UPDATE_LATEST_MSG";
+  payload: Message;
+};
+
+type ChatsAction =
+  | ChatsSetAction
+  | ChatsSelectAction
+  | ChatsUpdateLatestMsgAction;
 
 type ChatsContextValue = {
   stateChats: ChatsState;
@@ -31,6 +39,19 @@ function reducerChats(state: ChatsState, action: ChatsAction) {
       return { ...state, chats: action.payload };
     case "SELECT":
       return { ...state, selectedChat: action.payload };
+    case "UPDATE_LATEST_MSG":
+      const msg = action.payload;
+      let chat = state.chats.find((chat) => chat._id === msg.chat);
+      if (!chat) return state;
+      chat = JSON.parse(JSON.stringify(chat)) as Chat;
+      chat.latestMessage = {
+        _id: msg._id,
+        sender: msg.sender,
+        content: msg.content,
+      };
+      const chats = state.chats.filter((chat) => chat._id !== msg.chat);
+      chats.unshift(chat);
+      return { ...state, chats };
     default:
       return state;
   }

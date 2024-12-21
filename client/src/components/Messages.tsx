@@ -14,7 +14,7 @@ export default function Messages() {
   const maxHeight = root ? root.offsetHeight - 200 : 0;
 
   function isOwnMessage(message: Message) {
-    return stateAuth.user?._id === message.sender;
+    return stateAuth.user?._id === message.sender._id;
   }
 
   function isPfpDisplayed(i: number) {

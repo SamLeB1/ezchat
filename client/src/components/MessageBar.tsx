@@ -11,7 +11,7 @@ export default function MessageBar() {
   const [messageInput, setMessageInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { stateAuth } = useAuthContext();
-  const { stateChats } = useChatsContext();
+  const { stateChats, dispatchChats } = useChatsContext();
   const { dispatchMessages } = useMessagesContext();
 
   function handleSend() {
@@ -32,6 +32,7 @@ export default function MessageBar() {
       )
       .then((res) => {
         dispatchMessages({ type: "ADD", payload: res.data });
+        dispatchChats({ type: "UPDATE_LATEST_MSG", payload: res.data });
         socket.emit("send-msg", res.data);
       })
       .catch((err) => console.error(err))
