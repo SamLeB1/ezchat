@@ -29,8 +29,17 @@ app.use("/api/messages", messageRouter);
 io.on("connection", (socket) => {
   console.log(`Socket ${socket.id} has connected.`);
 
+  socket.on("join-room", (room) => {
+    socket.join(room);
+  });
+
   socket.on("join-chats", (chatIds) => {
     socket.join(chatIds);
+  });
+
+  socket.on("add-chat", (chat) => {
+    const userIds = chat.users.map((user: any) => user._id);
+    socket.to(userIds).emit("add-chat", chat);
   });
 
   socket.on("send-msg", (msg) => {

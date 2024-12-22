@@ -21,10 +21,16 @@ type ChatsUpdateLatestMsgAction = {
   payload: Message;
 };
 
+type ChatsAddAction = {
+  type: "ADD";
+  payload: Chat;
+};
+
 type ChatsAction =
   | ChatsSetAction
   | ChatsSelectAction
-  | ChatsUpdateLatestMsgAction;
+  | ChatsUpdateLatestMsgAction
+  | ChatsAddAction;
 
 type ChatsContextValue = {
   stateChats: ChatsState;
@@ -39,7 +45,7 @@ function reducerChats(state: ChatsState, action: ChatsAction) {
       return { ...state, chats: action.payload };
     case "SELECT":
       return { ...state, selectedChat: action.payload };
-    case "UPDATE_LATEST_MSG":
+    case "UPDATE_LATEST_MSG": {
       const msg = action.payload;
       let chat = state.chats.find((chat) => chat._id === msg.chat);
       if (!chat) return state;
@@ -52,6 +58,16 @@ function reducerChats(state: ChatsState, action: ChatsAction) {
       const chats = state.chats.filter((chat) => chat._id !== msg.chat);
       chats.unshift(chat);
       return { ...state, chats };
+    }
+    case "ADD": {
+      const duplicateChat = state.chats.find(
+        (chat) => chat._id === action.payload._id,
+      );
+      if (duplicateChat) return state;
+      const chats = state.chats;
+      chats.unshift(action.payload);
+      return { ...state, chats };
+    }
     default:
       return state;
   }

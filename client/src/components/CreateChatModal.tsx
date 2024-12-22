@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MdClose } from "react-icons/md";
 import axios from "axios";
+import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
+import useChatsContext from "../hooks/useChatsContext.tsx";
 import useDebounce from "../hooks/useDebounce.tsx";
 import pfp from "../assets/images/pfp.png";
 
@@ -12,6 +14,7 @@ type CreateChatModalProps = {
 
 export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
   const { stateAuth } = useAuthContext();
+  const { dispatchChats } = useChatsContext();
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search);
   const [results, setResults] = useState([]);
@@ -43,6 +46,12 @@ export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
           },
         },
       )
+      .then((res) => {
+        socket.emit("join-room", res.data._id);
+        socket.emit("add-chat", res.data);
+        dispatchChats({ type: "ADD", payload: res.data });
+        dispatchChats({ type: "SELECT", payload: res.data });
+      })
       .catch((err) => console.error(err))
       .finally(() => {
         setIsLoadingCreate(false);
