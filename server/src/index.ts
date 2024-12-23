@@ -8,11 +8,24 @@ import authRouter from "./routes/auth";
 import userRouter from "./routes/users";
 import chatRouter from "./routes/chats";
 import messageRouter from "./routes/messages";
+import { Chat, Message } from "./types/types";
+
+interface ClientToServerEvents {
+  "join-room": (room: string) => void;
+  "join-chats": (chatIds: string[]) => void;
+  "add-chat": (chat: Chat) => void;
+  "send-msg": (msg: Message) => void;
+}
+
+interface ServerToClientEvents {
+  "add-chat": (chat: Chat) => void;
+  "receive-msg": (msg: Message) => void;
+}
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
+const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: {
     origin: "*",
   },
@@ -38,7 +51,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("add-chat", (chat) => {
-    const userIds = chat.users.map((user: any) => user._id);
+    const userIds = chat.users.map((user) => user._id);
     socket.to(userIds).emit("add-chat", chat);
   });
 

@@ -25,7 +25,7 @@ export default function ChatsPage() {
   }
 
   useEffect(() => {
-    socket.emit("join-room", stateAuth.user?._id);
+    socket.emit("join-room", stateAuth.user?._id as string);
     socket.on("add-chat", onAddChat);
     return () => {
       socket.off("add-chat", onAddChat);
