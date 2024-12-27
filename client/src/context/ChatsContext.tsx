@@ -54,6 +54,7 @@ function reducerChats(state: ChatsState, action: ChatsAction) {
         _id: msg._id,
         sender: msg.sender,
         content: msg.content,
+        createdAt: msg.createdAt,
       };
       const chats = state.chats.filter((chat) => chat._id !== msg.chat);
       chats.unshift(chat);

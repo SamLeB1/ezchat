@@ -11,7 +11,7 @@ export const getChats = async (req: Request, res: Response) => {
       .populate("users", "username")
       .populate({
         path: "latestMessage",
-        select: "sender content",
+        select: "sender content createdAt",
         populate: { path: "sender", select: "username" },
       });
     res.status(200).json(chats);
@@ -35,7 +35,7 @@ export const createChat = async (
       .populate("users", "username")
       .populate({
         path: "latestMessage",
-        select: "sender content",
+        select: "sender content createdAt",
         populate: { path: "sender", select: "username" },
       });
     if (foundChat) {

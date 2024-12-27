@@ -16,6 +16,19 @@ export default function ChatList() {
     return message.length <= 75 ? message : message.substring(0, 75) + "...";
   }
 
+  function getTimestamp(date: Date) {
+    const msPassed = Date.now() - date.getTime();
+    const sPassed = Math.floor(msPassed / 1000);
+    const mPassed = Math.floor(sPassed / 60);
+    const hPassed = Math.floor(mPassed / 60);
+    const dPassed = Math.floor(hPassed / 24);
+    if (mPassed < 1) return "Just now";
+    else if (hPassed < 1) return `${mPassed}m`;
+    else if (dPassed < 1) return `${hPassed}h`;
+    else if (dPassed < 7) return `${dPassed}d`;
+    else return date.toISOString().split("T")[0];
+  }
+
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_SERVER}/api/chats`, {
@@ -40,7 +53,14 @@ export default function ChatList() {
             className="mt-2 cursor-pointer rounded-lg bg-white px-2 py-1 shadow first:mt-0"
             onClick={() => dispatchChats({ type: "SELECT", payload: chat })}
           >
-            <div className="font-medium">{getChatName(chat)}</div>
+            <div className="flex items-center justify-between">
+              <div className="font-medium">{getChatName(chat)}</div>
+              {chat.latestMessage && (
+                <div className="text-sm text-gray-500">
+                  {getTimestamp(new Date(chat.latestMessage.createdAt))}
+                </div>
+              )}
+            </div>
             <div className="break-words text-sm">
               {chat.latestMessage
                 ? `${chat.latestMessage.sender.username}: ${getMessagePreview(chat.latestMessage.content)}`

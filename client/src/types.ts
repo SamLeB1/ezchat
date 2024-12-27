@@ -11,9 +11,10 @@ export type Chat = {
       username: string;
     };
     content: string;
+    createdAt: string;
   } | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 };
 
@@ -25,7 +26,7 @@ export type Message = {
   };
   chat: string;
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 };
