@@ -16,6 +16,11 @@ type ChatsSelectAction = {
   payload: Chat;
 };
 
+type ChatsSelectByIdAction = {
+  type: "SELECT_BY_ID";
+  payload: string;
+};
+
 type ChatsUpdateLatestMsgAction = {
   type: "UPDATE_LATEST_MSG";
   payload: Message;
@@ -29,6 +34,7 @@ type ChatsAddAction = {
 type ChatsAction =
   | ChatsSetAction
   | ChatsSelectAction
+  | ChatsSelectByIdAction
   | ChatsUpdateLatestMsgAction
   | ChatsAddAction;
 
@@ -45,6 +51,11 @@ function reducerChats(state: ChatsState, action: ChatsAction) {
       return { ...state, chats: action.payload };
     case "SELECT":
       return { ...state, selectedChat: action.payload };
+    case "SELECT_BY_ID": {
+      const chat = state.chats.find((chat) => chat._id === action.payload);
+      if (!chat) return state;
+      return { ...state, selectedChat: chat };
+    }
     case "UPDATE_LATEST_MSG": {
       const msg = action.payload;
       let chat = state.chats.find((chat) => chat._id === msg.chat);

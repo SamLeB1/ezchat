@@ -7,7 +7,7 @@ import useGetChatName from "../hooks/useGetChatName.tsx";
 export default function ChatWindow() {
   const [maxWidth, setMaxWidth] = useState(getMaxWidth());
   const { stateChats } = useChatsContext();
-  const getChatName = useGetChatName();
+  const { getChatName } = useGetChatName();
 
   function getMaxWidth() {
     const root = document.getElementById("root");

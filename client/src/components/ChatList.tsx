@@ -8,7 +8,7 @@ import useGetChatName from "../hooks/useGetChatName.tsx";
 export default function ChatList() {
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
-  const getChatName = useGetChatName();
+  const { getChatName } = useGetChatName();
   const root = document.getElementById("root");
   const maxHeight = root ? root.offsetHeight - 176 : 0;
 
