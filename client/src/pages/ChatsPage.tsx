@@ -3,6 +3,7 @@ import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useMessagesContext from "../hooks/useMessagesContext.tsx";
+import useNotificationsContext from "../hooks/useNotificationsContext.tsx";
 import Header from "../components/Header.tsx";
 import PeopleWindow from "../components/PeopleWindow.tsx";
 import ChatWindow from "../components/ChatWindow.tsx";
@@ -12,6 +13,7 @@ export default function ChatsPage() {
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
   const { dispatchMessages } = useMessagesContext();
+  const { dispatchNotifications } = useNotificationsContext();
 
   function onAddChat(chat: Chat) {
     socket.emit("join-room", chat._id);
@@ -21,6 +23,7 @@ export default function ChatsPage() {
   function onReceiveMessage(message: Message) {
     if (stateChats.selectedChat?._id === message.chat)
       dispatchMessages({ type: "ADD", payload: message });
+    else dispatchNotifications({ type: "ADD_MESSAGE", payload: message });
     dispatchChats({ type: "UPDATE_LATEST_MSG", payload: message });
   }
 

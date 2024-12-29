@@ -34,11 +34,19 @@ function reducerNotifications(
 ) {
   switch (action.type) {
     case "ADD_CHAT": {
+      const duplicateChat = state.chats.find(
+        (chat) => chat._id === action.payload._id,
+      );
+      if (duplicateChat) return state;
       const chats = state.chats;
       chats.unshift(action.payload);
       return { ...state, chats };
     }
     case "ADD_MESSAGE": {
+      const duplicateMessage = state.messages.find(
+        (message) => message._id === action.payload._id,
+      );
+      if (duplicateMessage) return state;
       const messages = state.messages;
       messages.unshift(action.payload);
       return { ...state, messages };
