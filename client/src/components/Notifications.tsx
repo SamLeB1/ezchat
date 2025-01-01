@@ -13,6 +13,7 @@ export default function Notifications() {
   const { stateNotifications } = useNotificationsContext();
   const { getChatNameById } = useGetChatName();
   useClickOutside(dropdownRef, () => setIsOpen(false));
+  const notifs = getMsgNotifs(stateNotifications.messages);
 
   function getMsgNotifs(messages: Message[]) {
     const msgCount: { chatId: string; count: number }[] = [];
@@ -38,16 +39,21 @@ export default function Notifications() {
   return (
     <div ref={dropdownRef}>
       <button
-        className="mr-2"
+        className="relative mr-2 rounded-full bg-gray-200 p-2 hover:bg-gray-300"
         type="button"
         title="Notifications"
         onClick={() => setIsOpen(!isOpen)}
       >
         <MdNotifications className="h-6 w-6" />
+        {notifs.length > 0 && (
+          <div className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-xs text-white">
+            {notifs.length}
+          </div>
+        )}
       </button>
-      {isOpen && (
+      {isOpen && notifs.length > 0 && (
         <ul className="absolute right-4 max-h-[50vh] overflow-y-auto rounded-lg bg-white p-1 shadow-lg">
-          {getMsgNotifs(stateNotifications.messages).map((notif, i) => (
+          {notifs.map((notif, i) => (
             <li
               className="cursor-pointer rounded-lg bg-white px-2 py-1 hover:bg-gray-100"
               key={i}
@@ -57,6 +63,11 @@ export default function Notifications() {
             </li>
           ))}
         </ul>
+      )}
+      {isOpen && notifs.length === 0 && (
+        <div className="absolute right-4 rounded-lg bg-white px-2 py-1 shadow-lg">
+          You have no notifications
+        </div>
       )}
     </div>
   );
