@@ -4,16 +4,28 @@ import useChatsContext from "../hooks/useChatsContext.tsx";
 import useNotificationsContext from "../hooks/useNotificationsContext.tsx";
 import useGetChatName from "../hooks/useGetChatName.tsx";
 import useClickOutside from "../hooks/useClickOutside.tsx";
-import { Message } from "../types.ts";
+import { Chat, Message } from "../types.ts";
 
 export default function Notifications() {
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const { dispatchChats } = useChatsContext();
   const { stateNotifications } = useNotificationsContext();
-  const { getChatNameById } = useGetChatName();
+  const { getChatName, getChatNameById } = useGetChatName();
   useClickOutside(dropdownRef, () => setIsOpen(false));
-  const notifs = getMsgNotifs(stateNotifications.messages);
+  const notifs = getNotifs();
+
+  function getChatNotifs(chats: Chat[]) {
+    const chatNotifs = chats.map((chat) => {
+      const msg = `${getChatName(chat)} has started a chat with you`;
+      const onClick = () => {
+        setIsOpen(false);
+        dispatchChats({ type: "SELECT", payload: chat });
+      };
+      return { msg, onClick };
+    });
+    return chatNotifs;
+  }
 
   function getMsgNotifs(messages: Message[]) {
     const msgCount: { chatId: string; count: number }[] = [];
@@ -34,6 +46,12 @@ export default function Notifications() {
       return { msg, onClick };
     });
     return msgNotifs;
+  }
+
+  function getNotifs() {
+    const chatNotifs = getChatNotifs(stateNotifications.chats);
+    const msgNotifs = getMsgNotifs(stateNotifications.messages);
+    return chatNotifs.concat(msgNotifs);
   }
 
   return (
@@ -65,7 +83,7 @@ export default function Notifications() {
         </ul>
       )}
       {isOpen && notifs.length === 0 && (
-        <div className="absolute right-4 rounded-lg bg-white px-2 py-1 shadow-lg">
+        <div className="absolute right-4 rounded-lg bg-white px-3 py-2 shadow-lg">
           You have no notifications
         </div>
       )}

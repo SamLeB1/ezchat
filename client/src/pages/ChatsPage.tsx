@@ -18,6 +18,7 @@ export default function ChatsPage() {
   function onAddChat(chat: Chat) {
     socket.emit("join-room", chat._id);
     dispatchChats({ type: "ADD", payload: chat });
+    dispatchNotifications({ type: "ADD_CHAT", payload: chat });
   }
 
   function onReceiveMessage(message: Message) {
