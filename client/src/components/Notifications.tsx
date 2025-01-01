@@ -10,7 +10,8 @@ export default function Notifications() {
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const { dispatchChats } = useChatsContext();
-  const { stateNotifications } = useNotificationsContext();
+  const { stateNotifications, dispatchNotifications } =
+    useNotificationsContext();
   const { getChatName, getChatNameById } = useGetChatName();
   useClickOutside(dropdownRef, () => setIsOpen(false));
   const notifs = getNotifs();
@@ -20,6 +21,7 @@ export default function Notifications() {
       const msg = `${getChatName(chat)} has started a chat with you`;
       const onClick = () => {
         setIsOpen(false);
+        dispatchNotifications({ type: "REMOVE", payload: chat._id });
         dispatchChats({ type: "SELECT", payload: chat });
       };
       return { msg, onClick };
@@ -41,6 +43,7 @@ export default function Notifications() {
           : `${m.count} new messages from ${getChatNameById(m.chatId)}`;
       const onClick = () => {
         setIsOpen(false);
+        dispatchNotifications({ type: "REMOVE", payload: m.chatId });
         dispatchChats({ type: "SELECT_BY_ID", payload: m.chatId });
       };
       return { msg, onClick };

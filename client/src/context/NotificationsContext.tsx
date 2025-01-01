@@ -16,9 +16,15 @@ type NotificationsAddMessageAction = {
   payload: Message;
 };
 
+type NotificationsRemoveAction = {
+  type: "REMOVE";
+  payload: string;
+};
+
 type NotificationsAction =
   | NotificationsAddChatAction
-  | NotificationsAddMessageAction;
+  | NotificationsAddMessageAction
+  | NotificationsRemoveAction;
 
 type NotificationsContextValue = {
   stateNotifications: NotificationsState;
@@ -51,6 +57,13 @@ function reducerNotifications(
       messages.unshift(action.payload);
       return { ...state, messages };
     }
+    case "REMOVE":
+      return {
+        chats: state.chats.filter((chat) => chat._id !== action.payload),
+        messages: state.messages.filter(
+          (message) => message.chat !== action.payload,
+        ),
+      };
     default:
       return state;
   }

@@ -3,11 +3,13 @@ import axios from "axios";
 import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
+import useNotificationsContext from "../hooks/useNotificationsContext.tsx";
 import useGetChatName from "../hooks/useGetChatName.tsx";
 
 export default function ChatList() {
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
+  const { dispatchNotifications } = useNotificationsContext();
   const { getChatName } = useGetChatName();
   const root = document.getElementById("root");
   const maxHeight = root ? root.offsetHeight - 176 : 0;
@@ -51,7 +53,10 @@ export default function ChatList() {
           <div
             key={i}
             className="mt-2 cursor-pointer rounded-lg bg-white px-2 py-1 shadow first:mt-0"
-            onClick={() => dispatchChats({ type: "SELECT", payload: chat })}
+            onClick={() => {
+              dispatchChats({ type: "SELECT", payload: chat });
+              dispatchNotifications({ type: "REMOVE", payload: chat._id });
+            }}
           >
             <div className="flex items-center justify-between">
               <div className="font-medium">{getChatName(chat)}</div>
