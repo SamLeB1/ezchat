@@ -9,7 +9,8 @@ import useGetChatName from "../hooks/useGetChatName.tsx";
 export default function ChatList() {
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
-  const { dispatchNotifications } = useNotificationsContext();
+  const { stateNotifications, dispatchNotifications } =
+    useNotificationsContext();
   const { getChatName } = useGetChatName();
   const root = document.getElementById("root");
   const maxHeight = root ? root.offsetHeight - 176 : 0;
@@ -29,6 +30,15 @@ export default function ChatList() {
     else if (dPassed < 1) return `${hPassed}h`;
     else if (dPassed < 7) return `${dPassed}d`;
     else return date.toISOString().split("T")[0];
+  }
+
+  function isNotification(chatId: string) {
+    if (
+      stateNotifications.chats.find((chat) => chat._id === chatId) ||
+      stateNotifications.messages.find((message) => message.chat === chatId)
+    )
+      return true;
+    else return false;
   }
 
   useEffect(() => {
@@ -59,7 +69,14 @@ export default function ChatList() {
             }}
           >
             <div className="flex items-center justify-between">
-              <div className="font-medium">{getChatName(chat)}</div>
+              {isNotification(chat._id) ? (
+                <div className="flex items-center">
+                  <div className="mr-1 h-3 w-3 rounded-full bg-blue-500" />
+                  <div className="font-medium">{getChatName(chat)}</div>
+                </div>
+              ) : (
+                <div className="font-medium">{getChatName(chat)}</div>
+              )}
               {chat.latestMessage && (
                 <div className="text-sm text-gray-500">
                   {getTimestamp(new Date(chat.latestMessage.createdAt))}
