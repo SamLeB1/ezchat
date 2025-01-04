@@ -6,7 +6,7 @@ import useGetChatName from "../hooks/useGetChatName.tsx";
 import useClickOutside from "../hooks/useClickOutside.tsx";
 import { Chat, Message } from "../types.ts";
 
-export default function Notifications() {
+export default function BtnNotifications() {
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const { dispatchChats } = useChatsContext();
