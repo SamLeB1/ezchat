@@ -6,6 +6,10 @@ type NotificationsState = {
   messages: Message[];
 };
 
+type NotificationsInitAction = {
+  type: "INIT";
+};
+
 type NotificationsAddChatAction = {
   type: "ADD_CHAT";
   payload: Chat;
@@ -22,6 +26,7 @@ type NotificationsRemoveAction = {
 };
 
 type NotificationsAction =
+  | NotificationsInitAction
   | NotificationsAddChatAction
   | NotificationsAddMessageAction
   | NotificationsRemoveAction;
@@ -39,6 +44,11 @@ function reducerNotifications(
   action: NotificationsAction,
 ) {
   switch (action.type) {
+    case "INIT":
+      return {
+        chats: [],
+        messages: [],
+      };
     case "ADD_CHAT": {
       const duplicateChat = state.chats.find(
         (chat) => chat._id === action.payload._id,

@@ -3,6 +3,10 @@ import { Message } from "../types.ts";
 
 type MessagesState = Message[];
 
+type MessagesInitAction = {
+  type: "INIT";
+};
+
 type MessagesSetAction = {
   type: "SET";
   payload: Message[];
@@ -13,7 +17,10 @@ type MessagesAddAction = {
   payload: Message;
 };
 
-type MessagesAction = MessagesSetAction | MessagesAddAction;
+type MessagesAction =
+  | MessagesInitAction
+  | MessagesSetAction
+  | MessagesAddAction;
 
 type MessagesContextValue = {
   messages: MessagesState;
@@ -24,6 +31,8 @@ export const MessagesContext = createContext<MessagesContextValue | null>(null);
 
 function reducerMessages(state: MessagesState, action: MessagesAction) {
   switch (action.type) {
+    case "INIT":
+      return [];
     case "SET":
       return action.payload;
     case "ADD":

@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import { MdArrowDropDown } from "react-icons/md";
 import useClickOutside from "../hooks/useClickOutside.tsx";
+import useLogout from "../hooks/useLogout.tsx";
 import pfp from "../assets/images/pfp.png";
 
 export default function BtnAccount() {
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   useClickOutside(dropdownRef, () => setIsOpen(false));
+  const logout = useLogout();
 
   return (
     <div ref={dropdownRef}>
@@ -30,6 +32,7 @@ export default function BtnAccount() {
           <button
             className="block w-full rounded-lg bg-white px-2 py-1 text-start hover:bg-gray-100"
             type="button"
+            onClick={logout}
           >
             Log Out
           </button>

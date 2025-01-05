@@ -6,6 +6,10 @@ type ChatsState = {
   selectedChat: Chat | null;
 };
 
+type ChatsInitAction = {
+  type: "INIT";
+};
+
 type ChatsSetAction = {
   type: "SET";
   payload: Chat[];
@@ -32,6 +36,7 @@ type ChatsAddAction = {
 };
 
 type ChatsAction =
+  | ChatsInitAction
   | ChatsSetAction
   | ChatsSelectAction
   | ChatsSelectByIdAction
@@ -47,6 +52,11 @@ export const ChatsContext = createContext<ChatsContextValue | null>(null);
 
 function reducerChats(state: ChatsState, action: ChatsAction) {
   switch (action.type) {
+    case "INIT":
+      return {
+        chats: [],
+        selectedChat: null,
+      };
     case "SET":
       return { ...state, chats: action.payload };
     case "SELECT":

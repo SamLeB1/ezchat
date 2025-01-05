@@ -14,5 +14,7 @@ interface ClientToServerEvents {
 }
 
 const URL = import.meta.env.VITE_SERVER;
-export const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
-  io(URL);
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+  URL,
+  { autoConnect: false },
+);
