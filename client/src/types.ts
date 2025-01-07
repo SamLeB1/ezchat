@@ -1,3 +1,12 @@
+export type User = {
+  _id: string;
+  email: string;
+  username: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
+
 export type Chat = {
   _id: string;
   users: {
