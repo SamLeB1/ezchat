@@ -4,6 +4,7 @@ import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useMessagesContext from "../hooks/useMessagesContext.tsx";
 import useNotificationsContext from "../hooks/useNotificationsContext.tsx";
+import useGetAuthUser from "../hooks/useGetAuthUser.tsx";
 import Header from "../components/Header.tsx";
 import PeopleWindow from "../components/PeopleWindow.tsx";
 import ChatWindow from "../components/ChatWindow.tsx";
@@ -14,6 +15,7 @@ export default function ChatsPage() {
   const { stateChats, dispatchChats } = useChatsContext();
   const { dispatchMessages } = useMessagesContext();
   const { dispatchNotifications } = useNotificationsContext();
+  useGetAuthUser();
 
   function onAddChat(chat: Chat) {
     socket.emit("join-room", chat._id);

@@ -1,10 +1,13 @@
 import { createPortal } from "react-dom";
+import useUserContext from "../hooks/useUserContext.tsx";
 
 type ProfileModalProps = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
+  const { user } = useUserContext();
+
   return createPortal(
     <div
       className="fixed left-0 top-0 flex h-screen w-screen items-center justify-center bg-black bg-opacity-25"
