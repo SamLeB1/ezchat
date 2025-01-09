@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { MdClose } from "react-icons/md";
 import useUserContext from "../hooks/useUserContext.tsx";
@@ -8,7 +9,17 @@ type ProfileModalProps = {
 };
 
 export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
+  const [img, setImg] = useState<string | null>(null);
   const { user } = useUserContext();
+
+  function onImgChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => setImg(reader.result as string);
+      reader.onerror = (err) => console.error(err);
+    }
+  }
 
   return createPortal(
     <div
@@ -28,17 +39,29 @@ export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
         </button>
         <h1 className="text-center text-2xl">{user?.username}</h1>
         <div className="mt-4 flex items-center">
-          <img className="h-32 w-32 rounded-full" src={pfp} alt="" />
+          <img
+            className="h-32 w-32 rounded-full"
+            src={img ? img : pfp}
+            alt=""
+          />
           <div className="ml-2">
             <label className="block" htmlFor="change-pfp">
               Change your profile picture:
             </label>
-            <input
-              className="mt-1 block"
-              type="file"
-              id="change-pfp"
-              accept=".jpg, .jpeg, .png"
-            />
+            <div className="mt-1 flex items-center">
+              <input
+                type="file"
+                id="change-pfp"
+                accept=".jpg, .jpeg, .png"
+                onChange={onImgChange}
+              />
+              <button
+                className="ml-1 rounded-2xl bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
+                type="button"
+              >
+                Upload
+              </button>
+            </div>
           </div>
         </div>
         <div className="mt-4 text-lg">
