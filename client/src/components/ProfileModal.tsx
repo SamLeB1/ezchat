@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MdClose } from "react-icons/md";
+import axios from "axios";
+import useAuthContext from "../hooks/useAuthContext.tsx";
 import useUserContext from "../hooks/useUserContext.tsx";
 import pfp from "../assets/images/pfp.png";
 
@@ -10,7 +12,8 @@ type ProfileModalProps = {
 
 export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
   const [img, setImg] = useState<string | null>(null);
-  const { user } = useUserContext();
+  const { stateAuth } = useAuthContext();
+  const { user, setUser } = useUserContext();
 
   function onImgChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
@@ -20,6 +23,26 @@ export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
       reader.onerror = (err) => console.error(err);
     }
   }
+
+  function uploadPfp() {
+    if (!img) return;
+    axios
+      .patch(
+        `${import.meta.env.VITE_SERVER}/api/users/upload-pfp`,
+        { img },
+        {
+          headers: {
+            Authorization: `Bearer ${stateAuth.user?.token}`,
+          },
+        },
+      )
+      .then((res) => setUser(res.data))
+      .catch((err) => console.error(err));
+  }
+
+  useEffect(() => {
+    if (user?.pfp) setImg(user.pfp);
+  }, [user?.pfp]);
 
   return createPortal(
     <div
@@ -56,8 +79,10 @@ export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
                 onChange={onImgChange}
               />
               <button
-                className="ml-1 rounded-2xl bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
+                className="ml-1 cursor-pointer rounded-2xl bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
                 type="button"
+                disabled={!img}
+                onClick={uploadPfp}
               >
                 Upload
               </button>

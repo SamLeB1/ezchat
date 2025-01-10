@@ -1,4 +1,5 @@
 import UserModel from "../models/User";
+import cloudinary from "../cloudinary";
 import { Request, Response } from "express";
 
 type GetUserRouteParams = {
@@ -7,6 +8,10 @@ type GetUserRouteParams = {
 
 type GetUsersQueryParams = {
   search?: string;
+};
+
+type UploadPfpBody = {
+  img: string;
 };
 
 export const getUser = async (
@@ -38,6 +43,30 @@ export const getUsers = async (
     }
     const users = await UserModel.find().select("-password");
     res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+export const uploadPfp = async (
+  req: Request<{}, {}, UploadPfpBody>,
+  res: Response
+) => {
+  try {
+    const img = req.body.img;
+    if (!img) {
+      res.status(400).json({ errors: [{ msg: "img not provided." }] });
+      return;
+    }
+    const uploadedImg = await cloudinary.uploader.upload(img, {
+      folder: "ezchat",
+    });
+    const user = await UserModel.findByIdAndUpdate(
+      req.user?._id,
+      { pfp: uploadedImg.secure_url },
+      { new: true }
+    );
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
