@@ -25,7 +25,7 @@ export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
   }
 
   function uploadPfp() {
-    if (!img) return;
+    if (!img || img === user?.pfp) return;
     axios
       .patch(
         `${import.meta.env.VITE_SERVER}/api/users/upload-pfp`,
@@ -81,7 +81,7 @@ export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
               <button
                 className="ml-1 cursor-pointer rounded-2xl bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
                 type="button"
-                disabled={!img}
+                disabled={!img || img === user?.pfp}
                 onClick={uploadPfp}
               >
                 Upload

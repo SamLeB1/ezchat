@@ -14,6 +14,10 @@ type UploadPfpBody = {
   img: string;
 };
 
+function getPublicId(imgUrl: string) {
+  return imgUrl.split("/").pop()?.split(".")[0];
+}
+
 export const getUser = async (
   req: Request<GetUserRouteParams>,
   res: Response
@@ -58,14 +62,18 @@ export const uploadPfp = async (
       res.status(400).json({ errors: [{ msg: "img not provided." }] });
       return;
     }
+    const user = await UserModel.findById(req.user?._id);
+    if (!user) {
+      res.status(404).json({ errors: [{ msg: "User not found." }] });
+      return;
+    }
+    const oldPfp = user.pfp;
     const uploadedImg = await cloudinary.uploader.upload(img, {
       folder: "ezchat",
     });
-    const user = await UserModel.findByIdAndUpdate(
-      req.user?._id,
-      { pfp: uploadedImg.secure_url },
-      { new: true }
-    );
+    user.pfp = uploadedImg.secure_url;
+    await user.save();
+    await cloudinary.uploader.destroy(`ezchat/${getPublicId(oldPfp)}`);
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
