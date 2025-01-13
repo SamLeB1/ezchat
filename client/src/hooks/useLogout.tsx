@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import useAuthContext from "./useAuthContext.tsx";
 import useUserContext from "./useUserContext.tsx";
 import useChatsContext from "./useChatsContext.tsx";
@@ -18,6 +19,7 @@ export default function useLogout() {
     dispatchMessages({ type: "INIT" });
     dispatchNotifications({ type: "INIT" });
     setUser(null);
+    toast("You have been logged out.");
   }
 
   return logout;

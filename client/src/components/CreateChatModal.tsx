@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MdClose } from "react-icons/md";
 import axios from "axios";
+import { toast } from "sonner";
 import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useDebounce from "../hooks/useDebounce.tsx";
 import pfp from "../assets/images/pfp.png";
+import { User } from "../types.ts";
 
 type CreateChatModalProps = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,7 +19,7 @@ export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
   const { dispatchChats } = useChatsContext();
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<User[]>([]);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
@@ -51,6 +53,7 @@ export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
         socket.emit("add-chat", res.data);
         dispatchChats({ type: "ADD", payload: res.data });
         dispatchChats({ type: "SELECT", payload: res.data });
+        if (res.status === 201) toast.success("Chat created successfully!");
       })
       .catch((err) => console.error(err))
       .finally(() => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MdClose } from "react-icons/md";
 import axios from "axios";
+import { toast } from "sonner";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useUserContext from "../hooks/useUserContext.tsx";
 import pfp from "../assets/images/pfp.png";
@@ -36,7 +37,10 @@ export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
           },
         },
       )
-      .then((res) => setUser(res.data))
+      .then((res) => {
+        setUser(res.data);
+        toast.success("Profile picture updated successfully!");
+      })
       .catch((err) => console.error(err));
   }
 

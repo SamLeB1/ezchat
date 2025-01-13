@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "sonner";
 import useAuthContext from "./useAuthContext.tsx";
 
 export default function useLogin() {
@@ -21,6 +22,7 @@ export default function useLogin() {
         localStorage.setItem("user", JSON.stringify(res.data));
         dispatchAuth({ type: "LOGIN", payload: res.data });
         navigate("/chats");
+        toast.success("You have been logged in!");
       })
       .catch((err) => {
         console.error(err);
