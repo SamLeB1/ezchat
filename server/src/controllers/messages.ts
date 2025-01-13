@@ -23,7 +23,7 @@ export const getMessages = async (
     }
     const messages = await MessageModel.find({ chat: chatId }).populate(
       "sender",
-      "username"
+      "username pfp"
     );
     res.status(200).json(messages);
   } catch (err) {
@@ -51,7 +51,7 @@ export const createMessage = async (
       chat: chatId,
       content,
     });
-    await message.populate("sender", "username");
+    await message.populate("sender", "username pfp");
     chat.latestMessage = message._id;
     await chat.save();
     res.status(201).json(message);

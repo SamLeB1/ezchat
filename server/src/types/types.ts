@@ -22,6 +22,7 @@ export type Message = {
   sender: {
     _id: string;
     username: string;
+    pfp: string | null;
   };
   chat: string;
   content: string;

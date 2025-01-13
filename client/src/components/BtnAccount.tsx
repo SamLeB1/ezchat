@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { MdArrowDropDown } from "react-icons/md";
 import ProfileModal from "./ProfileModal.tsx";
+import useUserContext from "../hooks/useUserContext.tsx";
 import useClickOutside from "../hooks/useClickOutside.tsx";
 import useLogout from "../hooks/useLogout.tsx";
 import pfp from "../assets/images/pfp.png";
@@ -9,6 +10,7 @@ export default function BtnAccount() {
   const dropdownRef = useRef(null);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [isOpenProfileModal, setIsOpenProfileModal] = useState(false);
+  const { user } = useUserContext();
   useClickOutside(dropdownRef, () => setIsOpenDropdown(false));
   const logout = useLogout();
 
@@ -21,7 +23,11 @@ export default function BtnAccount() {
           title="Account"
           onClick={() => setIsOpenDropdown(!isOpenDropdown)}
         >
-          <img className="h-10 w-10 rounded-full" src={pfp} alt="" />
+          <img
+            className="h-10 w-10 rounded-full"
+            src={user?.pfp ? user.pfp : pfp}
+            alt=""
+          />
           <MdArrowDropDown className="h-6 w-6" />
         </button>
         {isOpenDropdown && (

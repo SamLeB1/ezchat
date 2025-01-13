@@ -52,7 +52,11 @@ export default function Messages() {
           else
             return isPfpDisplayed(i) ? (
               <div key={i} className="mt-1 flex first:mt-0">
-                <img className="mr-1 h-8 w-8 rounded-full" src={pfp} alt="" />
+                <img
+                  className="mr-1 h-8 w-8 rounded-full"
+                  src={message.sender.pfp ? message.sender.pfp : pfp}
+                  alt=""
+                />
                 <div className="w-fit max-w-[75%] rounded-2xl bg-green-200 px-2 py-1">
                   <p className="break-words">{message.content}</p>
                 </div>
