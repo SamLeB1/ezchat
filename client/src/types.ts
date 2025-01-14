@@ -1,3 +1,7 @@
+export type ServerError = {
+  error: { message: string | string[] };
+};
+
 export type User = {
   _id: string;
   email: string;

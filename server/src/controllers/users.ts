@@ -27,7 +27,7 @@ export const getUser = async (
     res.status(200).json(user);
     return;
   } else {
-    res.status(404).json({ errors: [{ msg: "User not found." }] });
+    res.status(404).json({ error: { message: "User not found." } });
     return;
   }
 };
@@ -48,7 +48,8 @@ export const getUsers = async (
     const users = await UserModel.find().select("-password");
     res.status(200).json(users);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };
 
@@ -59,12 +60,12 @@ export const uploadPfp = async (
   try {
     const img = req.body.img;
     if (!img) {
-      res.status(400).json({ errors: [{ msg: "img not provided." }] });
+      res.status(400).json({ error: { message: "img not provided." } });
       return;
     }
     const user = await UserModel.findById(req.user?._id);
     if (!user) {
-      res.status(404).json({ errors: [{ msg: "User not found." }] });
+      res.status(404).json({ error: { message: "User not found." } });
       return;
     }
     const oldPfp = user.pfp;
@@ -76,6 +77,7 @@ export const uploadPfp = async (
     await cloudinary.uploader.destroy(`ezchat/${getPublicId(oldPfp)}`);
     res.status(200).json(user);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };

@@ -25,17 +25,19 @@ export const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      res.status(400).json({ errors: [{ msg: "All fields must be filled." }] });
+      res
+        .status(400)
+        .json({ error: { message: "All fields must be filled." } });
       return;
     }
     const user = await UserModel.findOne({ username });
     if (!user) {
-      res.status(404).json({ errors: [{ msg: "Username not found." }] });
+      res.status(404).json({ error: { message: "Username not found." } });
       return;
     }
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      res.status(401).json({ errors: [{ msg: "Password is incorrect." }] });
+      res.status(401).json({ error: { message: "Password is incorrect." } });
       return;
     }
     res.status(200).json({
@@ -44,7 +46,8 @@ export const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
       username: user.username,
     });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };
 
@@ -55,7 +58,8 @@ export const signup = async (
   try {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-      res.status(400).json(result);
+      const message = result.formatWith((error) => error.msg as string).array();
+      res.status(400).json({ error: { message } });
       return;
     }
     const { email, username, password } = req.body;
@@ -64,11 +68,13 @@ export const signup = async (
     });
     if (foundUser) {
       if (foundUser.email === email)
-        res.status(409).json({ errors: [{ msg: "Email is already taken." }] });
+        res
+          .status(409)
+          .json({ error: { message: ["Email is already taken."] } });
       else
         res
           .status(409)
-          .json({ errors: [{ msg: "Username is already taken." }] });
+          .json({ error: { message: ["Username is already taken."] } });
       return;
     }
     const salt = await bcrypt.genSalt(10);
@@ -84,6 +90,7 @@ export const signup = async (
       username: user.username,
     });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };

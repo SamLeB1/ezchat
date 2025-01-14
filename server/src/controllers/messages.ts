@@ -18,7 +18,7 @@ export const getMessages = async (
   try {
     const { chatId } = req.query;
     if (!chatId) {
-      res.status(400).json({ errors: [{ msg: "chatId not provided." }] });
+      res.status(400).json({ error: { message: "chatId not provided." } });
       return;
     }
     const messages = await MessageModel.find({ chat: chatId }).populate(
@@ -27,7 +27,8 @@ export const getMessages = async (
     );
     res.status(200).json(messages);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };
 
@@ -38,12 +39,12 @@ export const createMessage = async (
   try {
     const { chatId, content } = req.body;
     if (!chatId || !content) {
-      res.status(400).json({ errors: [{ msg: "Invalid request body." }] });
+      res.status(400).json({ error: { message: "Invalid request body." } });
       return;
     }
     const chat = await ChatModel.findById(chatId);
     if (!chat) {
-      res.status(404).json({ errors: [{ msg: "Chat not found." }] });
+      res.status(404).json({ error: { message: "Chat not found." } });
       return;
     }
     const message = await MessageModel.create({
@@ -56,6 +57,7 @@ export const createMessage = async (
     await chat.save();
     res.status(201).json(message);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };

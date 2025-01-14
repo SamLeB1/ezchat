@@ -16,7 +16,8 @@ export const getChats = async (req: Request, res: Response) => {
       });
     res.status(200).json(chats);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };
 
@@ -26,7 +27,7 @@ export const createChat = async (
 ) => {
   try {
     if (!req.body.userId) {
-      res.status(400).json({ errors: [{ msg: "userId not provided." }] });
+      res.status(400).json({ error: { message: "userId not provided." } });
       return;
     }
     const foundChat = await ChatModel.findOne({
@@ -48,6 +49,7 @@ export const createChat = async (
     await chat.populate("users", "username");
     res.status(201).json(chat);
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: { message: "Internal server error." } });
   }
 };

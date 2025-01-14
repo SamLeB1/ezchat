@@ -3,16 +3,17 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import useAuthContext from "./useAuthContext.tsx";
+import { ServerError } from "../types.ts";
 
 export default function useSignup() {
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState([]);
+  const [error, setError] = useState<ServerError["error"] | null>(null);
   const navigate = useNavigate();
   const { dispatchAuth } = useAuthContext();
 
   async function signup(email: string, username: string, password: string) {
     setIsLoading(true);
-    setErrors([]);
+    setError(null);
     axios
       .post(`${import.meta.env.VITE_SERVER}/api/auth/signup`, {
         email,
@@ -27,10 +28,10 @@ export default function useSignup() {
       })
       .catch((err) => {
         console.error(err);
-        setErrors(err.response.data.errors);
+        setError(err.response.data.error);
       })
       .finally(() => setIsLoading(false));
   }
 
-  return { signup, isLoading, errors };
+  return { signup, isLoading, error };
 }

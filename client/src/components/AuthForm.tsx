@@ -7,11 +7,11 @@ export default function AuthForm() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoading: isLoadingLogin, errors: errorsLogin } = useLogin();
+  const { login, isLoading: isLoadingLogin, error: errorLogin } = useLogin();
   const {
     signup,
     isLoading: isLoadingSignup,
-    errors: errorsSignup,
+    error: errorSignup,
   } = useSignup();
 
   async function handleLogin(e: FormEvent) {
@@ -51,13 +51,11 @@ export default function AuthForm() {
             Sign Up
           </button>
         </div>
-        {errorsLogin.map((error, index) => {
-          return (
-            <p key={index} className="mb-1 text-sm text-red-500">
-              <b>Error:</b> {error.msg}
-            </p>
-          );
-        })}
+        {errorLogin && (
+          <p className="mb-1 text-sm text-red-500">
+            <b>Error:</b> {errorLogin.message}
+          </p>
+        )}
         <div className="mb-3">
           <label
             className="mb-1 block text-sm font-medium text-gray-700"
@@ -121,13 +119,14 @@ export default function AuthForm() {
             Sign Up
           </button>
         </div>
-        {errorsSignup.map((error, index) => {
-          return (
-            <p key={index} className="mb-1 text-sm text-red-500">
-              <b>Error:</b> {error.msg}
-            </p>
-          );
-        })}
+        {errorSignup &&
+          (errorSignup.message as string[]).map((m, i) => {
+            return (
+              <p key={i} className="mb-1 text-sm text-red-500">
+                <b>Error:</b> {m}
+              </p>
+            );
+          })}
         <div className="mb-3">
           <label
             className="mb-1 block text-sm font-medium text-gray-700"
