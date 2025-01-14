@@ -114,7 +114,7 @@ export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
                 >
                   <img
                     className="mr-2 h-10 w-10 rounded-full"
-                    src={pfp}
+                    src={result.pfp ? result.pfp : pfp}
                     alt=""
                   />
                   <p>{result.username}</p>
