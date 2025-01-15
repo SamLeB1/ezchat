@@ -54,12 +54,13 @@ export default function CreateChatModal({ setIsOpen }: CreateChatModalProps) {
         dispatchChats({ type: "ADD", payload: res.data });
         dispatchChats({ type: "SELECT", payload: res.data });
         if (res.status === 201) toast.success("Chat created successfully!");
-      })
-      .catch((err) => console.error(err))
-      .finally(() => {
-        setIsLoadingCreate(false);
         setIsOpen(false);
-      });
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Chat couldn't be created.");
+      })
+      .finally(() => setIsLoadingCreate(false));
   }
 
   useEffect(() => {

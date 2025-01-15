@@ -30,6 +30,10 @@ export const createChat = async (
       res.status(400).json({ error: { message: "userId not provided." } });
       return;
     }
+    if (req.user?._id.toString() === req.body.userId) {
+      res.status(400).json({ error: { message: "userIds must be unique." } });
+      return;
+    }
     const foundChat = await ChatModel.findOne({
       $and: [{ users: req.user?._id }, { users: req.body.userId }],
     })

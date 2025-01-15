@@ -74,7 +74,8 @@ export const uploadPfp = async (
     });
     user.pfp = uploadedImg.secure_url;
     await user.save();
-    await cloudinary.uploader.destroy(`ezchat/${getPublicId(oldPfp)}`);
+    if (oldPfp)
+      await cloudinary.uploader.destroy(`ezchat/${getPublicId(oldPfp)}`);
     res.status(200).json(user);
   } catch (err) {
     console.error(err);

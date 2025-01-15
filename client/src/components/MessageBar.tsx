@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MdSend } from "react-icons/md";
 import axios from "axios";
+import { toast } from "sonner";
 import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
@@ -35,7 +36,10 @@ export default function MessageBar() {
         dispatchChats({ type: "UPDATE_LATEST_MSG", payload: res.data });
         socket.emit("send-msg", res.data);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        console.error(err);
+        toast.error("Message couldn't be sent.");
+      })
       .finally(() => setIsLoading(false));
   }
 

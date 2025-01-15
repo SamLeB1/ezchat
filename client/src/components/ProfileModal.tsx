@@ -41,7 +41,10 @@ export default function ProfileModal({ setIsOpen }: ProfileModalProps) {
         setUser(res.data);
         toast.success("Profile picture updated successfully!");
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        toast.error("Upload failed, please try again later.");
+      });
   }
 
   useEffect(() => {
