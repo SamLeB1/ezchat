@@ -1,12 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useNotificationsContext from "../hooks/useNotificationsContext.tsx";
 import useGetChatName from "../hooks/useGetChatName.tsx";
+import { Chat } from "../types.ts";
 
 export default function ChatList() {
+  const [refetchCount, setRefetchCount] = useState(0);
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
   const { stateNotifications, dispatchNotifications } =
@@ -50,11 +53,15 @@ export default function ChatList() {
       })
       .then((res) => {
         dispatchChats({ type: "SET", payload: res.data });
-        const chatIds = res.data.map((chat) => chat._id);
+        const chatIds = res.data.map((chat: Chat) => chat._id);
         socket.emit("join-chats", chatIds);
       })
-      .catch((err) => console.error(err));
-  }, []);
+      .catch((err) => {
+        console.error(err);
+        toast.error("Chat data couldn't be fetched. Retrying...");
+        setTimeout(() => setRefetchCount(refetchCount + 1), 5000);
+      });
+  }, [refetchCount]);
 
   return (
     <div className="mt-2 overflow-y-auto" style={{ maxHeight }}>

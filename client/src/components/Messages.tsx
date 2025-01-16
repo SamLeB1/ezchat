@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useMessagesContext from "../hooks/useMessagesContext.tsx";
@@ -7,6 +8,7 @@ import pfp from "../assets/images/pfp.png";
 import { Message } from "../types.ts";
 
 export default function Messages() {
+  const [refetchCount, setRefetchCount] = useState(0);
   const { stateAuth } = useAuthContext();
   const { stateChats } = useChatsContext();
   const { messages, dispatchMessages } = useMessagesContext();
@@ -32,9 +34,13 @@ export default function Messages() {
           `${import.meta.env.VITE_SERVER}/api/messages?chatId=${stateChats.selectedChat._id}`,
         )
         .then((res) => dispatchMessages({ type: "SET", payload: res.data }))
-        .catch((err) => console.error(err));
+        .catch((err) => {
+          console.error(err);
+          toast.error("Chat messages couldn't be fetched. Retrying...");
+          setTimeout(() => setRefetchCount(refetchCount + 1), 5000);
+        });
     }
-  }, [stateChats.selectedChat]);
+  }, [stateChats.selectedChat, refetchCount]);
 
   return (
     <div className="flex flex-1 flex-col justify-end rounded-lg bg-white p-2 shadow">
