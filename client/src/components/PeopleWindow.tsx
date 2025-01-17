@@ -10,7 +10,7 @@ export default function PeopleWindow() {
           <button type="button">Groups</button>
         </div>
       </div>
-      <div className="flex-1 p-2">
+      <div className="relative flex-1 p-2">
         <div className="flex">
           <button className="mr-2" title="New chat">
             <MdPersonAddAlt1 className="h-6 w-6" />
