@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import ClipLoader from "react-spinners/ClipLoader";
+import BeatLoader from "react-spinners/BeatLoader";
 import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
@@ -111,7 +112,11 @@ export default function Messages() {
                 </div>
               );
           })}
-          {showTyping && <div>...</div>}
+          {showTyping && (
+            <div className="mt-2">
+              <BeatLoader size={12} />
+            </div>
+          )}
         </div>
       </div>
     );
