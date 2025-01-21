@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { MdNotifications } from "react-icons/md";
+import { socket } from "../socket.ts";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useNotificationsContext from "../hooks/useNotificationsContext.tsx";
 import useGetChatName from "../hooks/useGetChatName.tsx";
@@ -9,7 +10,7 @@ import { Chat, Message } from "../types.ts";
 export default function BtnNotifications() {
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { dispatchChats } = useChatsContext();
+  const { stateChats, dispatchChats } = useChatsContext();
   const { stateNotifications, dispatchNotifications } =
     useNotificationsContext();
   const { getChatName, getChatNameById } = useGetChatName();
@@ -21,6 +22,8 @@ export default function BtnNotifications() {
       const msg = `${getChatName(chat)} has started a chat with you`;
       const onClick = () => {
         setIsOpen(false);
+        if (stateChats.selectedChat)
+          socket.emit("hide-typing", stateChats.selectedChat._id);
         dispatchNotifications({ type: "REMOVE", payload: chat._id });
         dispatchChats({ type: "SELECT", payload: chat });
       };
@@ -43,6 +46,8 @@ export default function BtnNotifications() {
           : `${m.count} new messages from ${getChatNameById(m.chatId)}`;
       const onClick = () => {
         setIsOpen(false);
+        if (stateChats.selectedChat)
+          socket.emit("hide-typing", stateChats.selectedChat._id);
         dispatchNotifications({ type: "REMOVE", payload: m.chatId });
         dispatchChats({ type: "SELECT_BY_ID", payload: m.chatId });
       };

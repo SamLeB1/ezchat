@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import ClipLoader from "react-spinners/ClipLoader";
+import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useMessagesContext from "../hooks/useMessagesContext.tsx";
@@ -11,6 +12,7 @@ import { Message } from "../types.ts";
 export default function Messages() {
   const [isLoading, setIsLoading] = useState(false);
   const [refetchCount, setRefetchCount] = useState(0);
+  const [showTyping, setShowTyping] = useState(false);
   const { stateAuth } = useAuthContext();
   const { stateChats } = useChatsContext();
   const { messages, dispatchMessages } = useMessagesContext();
@@ -28,6 +30,26 @@ export default function Messages() {
     if (isOwnMessage(messages[i + 1])) return true;
     else return false;
   }
+
+  function onShowTyping(chatId: string) {
+    if (stateChats.selectedChat?._id !== chatId) return;
+    setShowTyping(true);
+  }
+
+  function onHideTyping(chatId: string) {
+    if (stateChats.selectedChat?._id !== chatId) return;
+    setShowTyping(false);
+  }
+
+  useEffect(() => {
+    setShowTyping(false);
+    socket.on("show-typing", onShowTyping);
+    socket.on("hide-typing", onHideTyping);
+    return () => {
+      socket.off("show-typing", onShowTyping);
+      socket.off("hide-typing", onHideTyping);
+    };
+  }, [stateChats.selectedChat]);
 
   useEffect(() => {
     if (stateChats.selectedChat) {
@@ -89,6 +111,7 @@ export default function Messages() {
                 </div>
               );
           })}
+          {showTyping && <div>...</div>}
         </div>
       </div>
     );

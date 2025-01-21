@@ -4,6 +4,8 @@ import { Chat, Message } from "./types.ts";
 interface ServerToClientEvents {
   "add-chat": (chat: Chat) => void;
   "receive-msg": (msg: Message) => void;
+  "show-typing": (chatId: string) => void;
+  "hide-typing": (chatId: string) => void;
 }
 
 interface ClientToServerEvents {
@@ -11,6 +13,8 @@ interface ClientToServerEvents {
   "join-chats": (chatIds: string[]) => void;
   "add-chat": (chat: Chat) => void;
   "send-msg": (msg: Message) => void;
+  "show-typing": (chatId: string) => void;
+  "hide-typing": (chatId: string) => void;
 }
 
 const URL = import.meta.env.VITE_SERVER;

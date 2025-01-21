@@ -15,11 +15,15 @@ interface ClientToServerEvents {
   "join-chats": (chatIds: string[]) => void;
   "add-chat": (chat: Chat) => void;
   "send-msg": (msg: Message) => void;
+  "show-typing": (chatId: string) => void;
+  "hide-typing": (chatId: string) => void;
 }
 
 interface ServerToClientEvents {
   "add-chat": (chat: Chat) => void;
   "receive-msg": (msg: Message) => void;
+  "show-typing": (chatId: string) => void;
+  "hide-typing": (chatId: string) => void;
 }
 
 const PORT = process.env.PORT || 3000;
@@ -57,6 +61,14 @@ io.on("connection", (socket) => {
 
   socket.on("send-msg", (msg) => {
     socket.to(msg.chat).emit("receive-msg", msg);
+  });
+
+  socket.on("show-typing", (chatId) => {
+    socket.to(chatId).emit("show-typing", chatId);
+  });
+
+  socket.on("hide-typing", (chatId) => {
+    socket.to(chatId).emit("hide-typing", chatId);
   });
 });
 

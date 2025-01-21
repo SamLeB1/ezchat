@@ -82,6 +82,8 @@ export default function ChatList() {
               key={i}
               className="mt-2 cursor-pointer rounded-lg bg-white px-2 py-1 shadow first:mt-0"
               onClick={() => {
+                if (stateChats.selectedChat)
+                  socket.emit("hide-typing", stateChats.selectedChat._id);
                 dispatchChats({ type: "SELECT", payload: chat });
                 dispatchNotifications({ type: "REMOVE", payload: chat._id });
               }}
