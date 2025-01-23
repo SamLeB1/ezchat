@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -11,6 +11,8 @@ import pfp from "../assets/images/pfp.png";
 import { Message } from "../types.ts";
 
 export default function Messages() {
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const isAtBottom = useRef(true);
   const [isLoading, setIsLoading] = useState(false);
   const [refetchCount, setRefetchCount] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
@@ -43,6 +45,31 @@ export default function Messages() {
   }
 
   useEffect(() => {
+    function onScroll() {
+      if (messagesRef.current)
+        isAtBottom.current =
+          messagesRef.current.scrollHeight - messagesRef.current.clientHeight <=
+          messagesRef.current.scrollTop + 1;
+    }
+
+    if (messagesRef.current) {
+      messagesRef.current.addEventListener("scroll", onScroll);
+    }
+
+    const intervalId = setInterval(() => {
+      if (messagesRef.current && isAtBottom.current)
+        messagesRef.current.scrollTop =
+          messagesRef.current.scrollHeight - messagesRef.current.clientHeight;
+    }, 100);
+
+    return () => {
+      if (messagesRef.current)
+        messagesRef.current.removeEventListener("scroll", onScroll);
+      clearInterval(intervalId);
+    };
+  }, [messagesRef.current]);
+
+  useEffect(() => {
     setShowTyping(false);
     socket.on("show-typing", onShowTyping);
     socket.on("hide-typing", onHideTyping);
@@ -62,6 +89,7 @@ export default function Messages() {
         .then((res) => {
           dispatchMessages({ type: "SET", payload: res.data });
           setIsLoading(false);
+          isAtBottom.current = true;
         })
         .catch((err) => {
           console.error(err);
@@ -80,7 +108,11 @@ export default function Messages() {
   else
     return (
       <div className="flex flex-1 flex-col justify-end rounded-lg bg-white p-2 shadow">
-        <div className="overflow-y-auto" style={{ maxHeight }}>
+        <div
+          ref={messagesRef}
+          className="overflow-y-auto"
+          style={{ maxHeight }}
+        >
           {messages.map((message, i) => {
             if (isOwnMessage(message))
               return (
