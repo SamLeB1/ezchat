@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MdSend } from "react-icons/md";
+import { MdImage, MdSend } from "react-icons/md";
 import axios from "axios";
 import { toast } from "sonner";
 import { socket } from "../socket.ts";
@@ -46,6 +46,40 @@ export default function MessageBar() {
       .finally(() => setIsLoading(false));
   }
 
+  function handleSendImg(img: string) {
+    if (!stateChats.selectedChat) return;
+    setIsLoading(true);
+    axios
+      .post(
+        `${import.meta.env.VITE_SERVER}/api/messages`,
+        { chatId: stateChats.selectedChat._id, content: img },
+        {
+          headers: {
+            Authorization: `Bearer ${stateAuth.user?.token}`,
+          },
+        },
+      )
+      .then((res) => {
+        dispatchMessages({ type: "ADD", payload: res.data });
+        dispatchChats({ type: "UPDATE_LATEST_MSG", payload: res.data });
+        socket.emit("send-msg", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Image couldn't be sent.");
+      })
+      .finally(() => setIsLoading(false));
+  }
+
+  function onChooseImg(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => handleSendImg(reader.result as string);
+      reader.onerror = (err) => console.error(err);
+    }
+  }
+
   useEffect(() => {
     setMessageInput("");
   }, [stateChats.selectedChat]);
@@ -82,13 +116,24 @@ export default function MessageBar() {
           if (e.key === "Enter") handleSend();
         }}
       />
+      <label htmlFor="choose-image">
+        <MdImage className="mr-1 h-6 w-6 cursor-pointer" title="Image" />
+      </label>
+      <input
+        className="hidden"
+        id="choose-image"
+        type="file"
+        accept=".jpg, .jpeg, .png, .gif"
+        onChange={onChooseImg}
+        disabled={isLoading}
+      />
       <button
         type="button"
         title="Send"
         onClick={handleSend}
         disabled={isLoading}
       >
-        <MdSend />
+        <MdSend className="h-6 w-6" />
       </button>
     </div>
   );
