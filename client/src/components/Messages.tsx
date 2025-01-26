@@ -114,16 +114,26 @@ export default function Messages() {
           style={{ maxHeight }}
         >
           {messages.map((message, i) => {
-            if (isOwnMessage(message))
-              return (
-                <div
-                  key={i}
-                  className="ml-auto mt-1 w-fit max-w-[75%] rounded-2xl bg-blue-200 px-2 py-1 first:mt-0"
-                >
-                  <p className="break-words">{message.content}</p>
-                </div>
-              );
-            else
+            if (isOwnMessage(message)) {
+              if (message.contentType === "text")
+                return (
+                  <div
+                    key={i}
+                    className="ml-auto mt-1 w-fit max-w-[75%] rounded-2xl bg-blue-200 px-2 py-1 first:mt-0"
+                  >
+                    <p className="break-words">{message.content}</p>
+                  </div>
+                );
+              else
+                return (
+                  <img
+                    key={i}
+                    className="ml-auto mt-1 max-w-[75%] overflow-x-auto rounded-2xl first:mt-0"
+                    src={message.content}
+                    alt=""
+                  />
+                );
+            } else if (message.contentType === "text")
               return isPfpDisplayed(i) ? (
                 <div key={i} className="mt-1 flex first:mt-0">
                   <img
@@ -142,6 +152,28 @@ export default function Messages() {
                 >
                   <p className="break-words">{message.content}</p>
                 </div>
+              );
+            else
+              return isPfpDisplayed(i) ? (
+                <div key={i} className="mt-1 flex first:mt-0">
+                  <img
+                    className="mr-1 h-8 w-8 rounded-full"
+                    src={message.sender.pfp ? message.sender.pfp : pfp}
+                    alt=""
+                  />
+                  <img
+                    className="max-w-[75%] overflow-x-auto rounded-2xl"
+                    src={message.content}
+                    alt=""
+                  />
+                </div>
+              ) : (
+                <img
+                  key={i}
+                  className="ml-9 mt-1 max-w-[75%] overflow-x-auto rounded-2xl first:mt-0"
+                  src={message.content}
+                  alt=""
+                />
               );
           })}
           {showTyping && (

@@ -27,7 +27,11 @@ export default function MessageBar() {
     axios
       .post(
         `${import.meta.env.VITE_SERVER}/api/messages`,
-        { chatId: stateChats.selectedChat._id, content: messageInput },
+        {
+          chatId: stateChats.selectedChat._id,
+          content: messageInput,
+          contentType: "text",
+        },
         {
           headers: {
             Authorization: `Bearer ${stateAuth.user?.token}`,
@@ -52,7 +56,11 @@ export default function MessageBar() {
     axios
       .post(
         `${import.meta.env.VITE_SERVER}/api/messages`,
-        { chatId: stateChats.selectedChat._id, content: img },
+        {
+          chatId: stateChats.selectedChat._id,
+          content: img,
+          contentType: "image",
+        },
         {
           headers: {
             Authorization: `Bearer ${stateAuth.user?.token}`,

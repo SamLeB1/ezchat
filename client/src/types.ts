@@ -41,6 +41,7 @@ export type Message = {
   };
   chat: string;
   content: string;
+  contentType: string;
   createdAt: string;
   updatedAt: string;
   __v: number;

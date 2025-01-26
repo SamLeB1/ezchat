@@ -9,6 +9,7 @@ type GetMessagesQueryParams = {
 type CreateMessageBody = {
   chatId: string;
   content: string;
+  contentType: string;
 };
 
 export const getMessages = async (
@@ -37,8 +38,8 @@ export const createMessage = async (
   res: Response
 ) => {
   try {
-    const { chatId, content } = req.body;
-    if (!chatId || !content) {
+    const { chatId, content, contentType } = req.body;
+    if (!chatId || !content || !contentType) {
       res.status(400).json({ error: { message: "Invalid request body." } });
       return;
     }
@@ -51,6 +52,7 @@ export const createMessage = async (
       sender: req.user?._id,
       chat: chatId,
       content,
+      contentType,
     });
     await message.populate("sender", "username pfp");
     chat.latestMessage = message._id;
