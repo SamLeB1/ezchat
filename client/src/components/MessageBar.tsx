@@ -1,21 +1,26 @@
 import { useEffect, useRef, useState } from "react";
-import { MdImage, MdSend } from "react-icons/md";
+import { MdEmojiEmotions, MdImage, MdSend } from "react-icons/md";
+import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 import { toast } from "sonner";
 import { socket } from "../socket.ts";
 import useAuthContext from "../hooks/useAuthContext.tsx";
 import useChatsContext from "../hooks/useChatsContext.tsx";
 import useMessagesContext from "../hooks/useMessagesContext.tsx";
+import useClickOutside from "../hooks/useClickOutside.tsx";
 
 export default function MessageBar() {
   const isMounted = useRef(false);
   const messageInputRef = useRef<HTMLInputElement>(null);
+  const emojiPickerRef = useRef(null);
   const [messageInput, setMessageInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isOpenEmojiPicker, setIsOpenEmojiPicker] = useState(false);
   const { stateAuth } = useAuthContext();
   const { stateChats, dispatchChats } = useChatsContext();
   const { dispatchMessages } = useMessagesContext();
+  useClickOutside(emojiPickerRef, () => setIsOpenEmojiPicker(false));
 
   function handleSend() {
     if (messageInput === "") return;
@@ -23,6 +28,7 @@ export default function MessageBar() {
     messageInputRef.current?.blur();
     setIsLoading(true);
     setMessageInput("");
+    setIsOpenEmojiPicker(false);
     socket.emit("hide-typing", stateChats.selectedChat._id);
     axios
       .post(
@@ -53,6 +59,7 @@ export default function MessageBar() {
   function handleSendImg(img: string) {
     if (!stateChats.selectedChat) return;
     setIsLoading(true);
+    setIsOpenEmojiPicker(false);
     axios
       .post(
         `${import.meta.env.VITE_SERVER}/api/messages`,
@@ -108,7 +115,20 @@ export default function MessageBar() {
   }, [messageInput]);
 
   return (
-    <div className="mt-2 flex items-center rounded-2xl bg-white px-4 shadow">
+    <div
+      className="relative mt-2 flex items-center rounded-2xl bg-white px-4 shadow"
+      ref={emojiPickerRef}
+    >
+      {isOpenEmojiPicker && (
+        <div className="absolute bottom-12 left-2">
+          <EmojiPicker
+            onEmojiClick={(emojiData) => {
+              setMessageInput(messageInput + emojiData.emoji);
+              messageInputRef.current?.focus();
+            }}
+          />
+        </div>
+      )}
       <input
         className="mr-2 w-full py-1 outline-none"
         ref={messageInputRef}
@@ -124,8 +144,20 @@ export default function MessageBar() {
           if (e.key === "Enter") handleSend();
         }}
       />
-      <label htmlFor="choose-image">
-        <MdImage className="mr-1 h-6 w-6 cursor-pointer" title="Image" />
+      <button
+        className="mr-1"
+        type="button"
+        title="Emoji"
+        onClick={() => setIsOpenEmojiPicker(!isOpenEmojiPicker)}
+      >
+        <MdEmojiEmotions className="h-6 w-6" />
+      </button>
+      <label
+        className="mr-1 cursor-pointer"
+        htmlFor="choose-image"
+        title="Image"
+      >
+        <MdImage className="h-6 w-6" />
       </label>
       <input
         className="hidden"
