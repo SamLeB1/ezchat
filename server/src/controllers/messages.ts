@@ -1,5 +1,6 @@
 import ChatModel from "../models/Chat";
 import MessageModel from "../models/Message";
+import cloudinary from "../cloudinary";
 import { Request, Response } from "express";
 
 type GetMessagesQueryParams = {
@@ -38,7 +39,8 @@ export const createMessage = async (
   res: Response
 ) => {
   try {
-    const { chatId, content, contentType } = req.body;
+    const { chatId, contentType } = req.body;
+    let { content } = req.body;
     if (!chatId || !content || !contentType) {
       res.status(400).json({ error: { message: "Invalid request body." } });
       return;
@@ -47,6 +49,12 @@ export const createMessage = async (
     if (!chat) {
       res.status(404).json({ error: { message: "Chat not found." } });
       return;
+    }
+    if (contentType === "image") {
+      const uploadedImg = await cloudinary.uploader.upload(content, {
+        folder: "ezchat",
+      });
+      content = uploadedImg.secure_url;
     }
     const message = await MessageModel.create({
       sender: req.user?._id,
