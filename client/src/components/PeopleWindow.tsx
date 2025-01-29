@@ -1,4 +1,4 @@
-import { MdGroupAdd, MdPersonAddAlt1 } from "react-icons/md";
+import ChatListTop from "./ChatListTop.tsx";
 import ChatList from "./ChatList.tsx";
 
 export default function PeopleWindow() {
@@ -11,14 +11,7 @@ export default function PeopleWindow() {
         </div>
       </div>
       <div className="relative flex-1 p-2">
-        <div className="flex">
-          <button className="mr-2" title="New chat">
-            <MdPersonAddAlt1 className="h-6 w-6" />
-          </button>
-          <button title="New group chat">
-            <MdGroupAdd className="h-6 w-6" />
-          </button>
-        </div>
+        <ChatListTop />
         <ChatList />
       </div>
     </div>

@@ -8,6 +8,7 @@ type CreateChatBody = {
 export const getChats = async (req: Request, res: Response) => {
   try {
     const chats = await ChatModel.find({ users: req.user?._id })
+      .sort({ updatedAt: -1 })
       .populate("users", "username")
       .populate({
         path: "latestMessage",
